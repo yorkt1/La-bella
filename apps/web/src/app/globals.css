@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@source "../../packages/ui/src/**/*.{ts,tsx}";
+
+@theme {
+  /* Fontes */
+  --font-cormorant: var(--font-cormorant);
+  --font-playfair: var(--font-playfair);
+  --font-poppins: var(--font-poppins);
+
+  /* Cores Primárias */
+  --color-rose-light: #F6E6E6;
+  --color-rose-gold: #C89B7B;
+  --color-brown: #7A5C52;
+  --color-black-soft: #1E1E1E;
+  --color-gold: #D4AF37;
+  --color-gold-light: #E8D5A3;
+  --color-off-white: #FDFAF8;
+
+  /* Status */
+  --color-success: #2E7D32;
+  --color-info: #1565C0;
+  --color-warning: #E65100;
+  --color-danger: #C62828;
+}
+
+@layer base {
+  :root {
+    --font-cormorant: '';
+    --font-playfair: '';
+    --font-poppins: '';
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-poppins, ui-sans-serif, system-ui, sans-serif);
+    background-color: #ffffff;
+    color: #1E1E1E;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2 {
+    font-family: var(--font-cormorant, ui-serif, Georgia, serif);
+  }
+
+  h3, h4 {
+    font-family: var(--font-playfair, ui-serif, Georgia, serif);
+  }
+
+  ::selection {
+    background-color: #F6E6E6;
+    color: #7A5C52;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}

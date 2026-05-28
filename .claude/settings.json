@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(Select-String \"next|react|tailwind|turbo\")",
+      "Bash(npm run *)",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")"
+    ]
+  }
+}
