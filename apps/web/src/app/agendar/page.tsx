@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { Calendar, Clock, CheckCircle, Tag } from 'lucide-react'
+import { useServices } from '@/hooks/useServices'
+import { useAvailability } from '@/hooks/useAvailability'
 
 const schema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -21,20 +23,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-interface Service {
-  id: string
-  name: string
-  price: number
-  duration_minutes: number
-  category: string | null
-}
-
-interface Slot {
-  starts_at: string
-  ends_at: string
-  available: boolean
-}
-
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 11)
   if (digits.length <= 2) return `(${digits}`
@@ -42,14 +30,17 @@ function formatPhone(value: string) {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
 
+const inputClass = 'w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors'
+const labelClass = 'text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]'
+const errorClass = 'text-[11px] text-[#C62828]'
+
 export default function AgendarPage() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [services, setServices] = useState<Service[]>([])
-  const [slots, setSlots] = useState<Slot[]>([])
-  const [loadingSlots, setLoadingSlots] = useState(false)
   const [couponStatus, setCouponStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle')
   const [couponDiscount, setCouponDiscount] = useState<string | null>(null)
+
+  const { services } = useServices()
 
   const {
     register,
@@ -62,30 +53,17 @@ export default function AgendarPage() {
   const selectedServiceId = watch('service_id')
   const selectedDate = watch('date')
   const selectedStartsAt = watch('starts_at')
-  const selectedTime = selectedStartsAt ? selectedStartsAt.slice(11, 16) : ''
   const couponValue = watch('coupon_code')
+  const selectedTime = selectedStartsAt ? selectedStartsAt.slice(11, 16) : ''
 
-  // Load services on mount
-  useEffect(() => {
-    fetch('/api/services')
-      .then(r => r.json())
-      .then(setServices)
-      .catch(() => {})
-  }, [])
+  const { slots, loading: loadingSlots } = useAvailability(selectedServiceId, selectedDate)
 
-  // Load availability when service + date change
-  useEffect(() => {
-    if (!selectedServiceId || !selectedDate) {
-      setSlots([])
-      return
-    }
-    setLoadingSlots(true)
-    setValue('starts_at', '')
-    fetch(`/api/bookings/availability?serviceId=${selectedServiceId}&date=${selectedDate}`)
-      .then(r => r.json())
-      .then(data => { setSlots(data); setLoadingSlots(false) })
-      .catch(() => setLoadingSlots(false))
-  }, [selectedServiceId, selectedDate, setValue])
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const minDate = tomorrow.toISOString().split('T')[0]
+  const maxDate = new Date()
+  maxDate.setDate(maxDate.getDate() + 60)
+  const maxDateStr = maxDate.toISOString().split('T')[0]
 
   async function checkCoupon() {
     const code = couponValue?.trim().toUpperCase()
@@ -97,7 +75,11 @@ export default function AgendarPage() {
       if (res.ok) {
         const data = await res.json()
         setCouponStatus('valid')
-        setCouponDiscount(data.discount_type === 'percent' ? `${data.discount_value}% de desconto` : `R$ ${data.discount_value.toFixed(2).replace('.', ',')} de desconto`)
+        setCouponDiscount(
+          data.discount_type === 'percent'
+            ? `${data.discount_value}% de desconto`
+            : `R$ ${data.discount_value.toFixed(2).replace('.', ',')} de desconto`
+        )
       } else {
         setCouponStatus('invalid')
       }
@@ -132,15 +114,6 @@ export default function AgendarPage() {
       setSubmitError('Erro de conexão. Tente novamente.')
     }
   }
-
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const minDate = tomorrow.toISOString().split('T')[0]
-  const maxDate = new Date()
-  maxDate.setDate(maxDate.getDate() + 60)
-  const maxDateStr = maxDate.toISOString().split('T')[0]
-
-  const availableSlots = slots.filter(s => s.available)
 
   if (submitted) {
     return (
@@ -191,28 +164,28 @@ export default function AgendarPage() {
               <h3 className="text-lg text-[#1E1E1E] mb-6" style={{ fontFamily: 'var(--font-playfair)' }}>Dados Pessoais</h3>
               <div className="grid sm:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>Nome completo *</label>
-                  <input {...register('name')} placeholder="Seu nome completo"
-                    className="w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors" />
-                  {errors.name && <p className="text-[11px] text-[#C62828]">{errors.name.message}</p>}
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>Nome completo *</label>
+                  <input {...register('name')} placeholder="Seu nome completo" className={inputClass} />
+                  {errors.name && <p className={errorClass}>{errors.name.message}</p>}
                 </div>
+
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>WhatsApp *</label>
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>WhatsApp *</label>
                   <input
                     {...register('phone')}
                     placeholder="(11) 99999-9999"
-                    onChange={(e) => {
+                    onChange={e => {
                       e.target.value = formatPhone(e.target.value)
                       register('phone').onChange(e)
                     }}
-                    className="w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors"
+                    className={inputClass}
                   />
-                  {errors.phone && <p className="text-[11px] text-[#C62828]">{errors.phone.message}</p>}
+                  {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
                 </div>
+
                 <div className="flex flex-col gap-1 sm:col-span-2">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>E-mail</label>
-                  <input {...register('email')} type="email" placeholder="seu@email.com (opcional)"
-                    className="w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors" />
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>E-mail</label>
+                  <input {...register('email')} type="email" placeholder="seu@email.com (opcional)" className={inputClass} />
                 </div>
               </div>
             </div>
@@ -221,34 +194,32 @@ export default function AgendarPage() {
             <div className="bg-white border border-[#EAE0DC] rounded-2xl p-6 lg:p-8">
               <h3 className="text-lg text-[#1E1E1E] mb-6" style={{ fontFamily: 'var(--font-playfair)' }}>Serviço e Data</h3>
               <div className="grid sm:grid-cols-2 gap-5">
+
                 <div className="flex flex-col gap-1 sm:col-span-2">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>Serviço *</label>
-                  <select {...register('service_id')}
-                    className="w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors">
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>Serviço *</label>
+                  <select {...register('service_id')} className={inputClass}>
                     <option value="">Selecione um serviço</option>
-                    {services.map((s) => (
+                    {services.map(s => (
                       <option key={s.id} value={s.id}>
                         {s.name} — {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(s.price)} ({s.duration_minutes} min)
                       </option>
                     ))}
                   </select>
-                  {errors.service_id && <p className="text-[11px] text-[#C62828]">{errors.service_id.message}</p>}
+                  {errors.service_id && <p className={errorClass}>{errors.service_id.message}</p>}
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>
                     <Calendar size={10} className="inline mr-1" />Data *
                   </label>
-                  <input {...register('date')} type="date" min={minDate} max={maxDateStr}
-                    className="w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors" />
-                  {errors.date && <p className="text-[11px] text-[#C62828]">{errors.date.message}</p>}
+                  <input {...register('date')} type="date" min={minDate} max={maxDateStr} className={inputClass} />
+                  {errors.date && <p className={errorClass}>{errors.date.message}</p>}
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>
                     <Clock size={10} className="inline mr-1" />Horário *
                   </label>
-
                   {!selectedServiceId || !selectedDate ? (
                     <p className="text-xs text-[#7A5C52]/50 py-3" style={{ fontFamily: 'var(--font-poppins)' }}>
                       Selecione o serviço e a data primeiro
@@ -258,13 +229,13 @@ export default function AgendarPage() {
                       <div className="w-4 h-4 border-2 border-[#C89B7B] border-t-transparent rounded-full animate-spin" />
                       <p className="text-xs text-[#7A5C52]/50" style={{ fontFamily: 'var(--font-poppins)' }}>Buscando horários...</p>
                     </div>
-                  ) : availableSlots.length === 0 ? (
+                  ) : slots.length === 0 ? (
                     <p className="text-xs text-[#C62828] py-3" style={{ fontFamily: 'var(--font-poppins)' }}>
                       Nenhum horário disponível neste dia
                     </p>
                   ) : (
                     <div className="grid grid-cols-4 gap-2">
-                      {availableSlots.map((slot) => {
+                      {slots.map(slot => {
                         const time = slot.starts_at.slice(11, 16)
                         return (
                           <button
@@ -284,11 +255,11 @@ export default function AgendarPage() {
                       })}
                     </div>
                   )}
-                  {errors.starts_at && <p className="text-[11px] text-[#C62828]">{errors.starts_at.message}</p>}
+                  {errors.starts_at && <p className={errorClass}>{errors.starts_at.message}</p>}
                 </div>
 
                 <div className="flex flex-col gap-1 sm:col-span-2">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>
                     <Tag size={10} className="inline mr-1" />Cupom de desconto
                   </label>
                   <div className="flex gap-2">
@@ -301,7 +272,7 @@ export default function AgendarPage() {
                         setCouponStatus('idle')
                         setCouponDiscount(null)
                       }}
-                      className="flex-1 rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors uppercase"
+                      className={`${inputClass} flex-1 uppercase`}
                       style={{ fontFamily: 'var(--font-poppins)' }}
                     />
                     <button
@@ -318,16 +289,19 @@ export default function AgendarPage() {
                     <p className="text-[11px] text-[#2E7D32]" style={{ fontFamily: 'var(--font-poppins)' }}>✓ Cupom válido — {couponDiscount}</p>
                   )}
                   {couponStatus === 'invalid' && (
-                    <p className="text-[11px] text-[#C62828]" style={{ fontFamily: 'var(--font-poppins)' }}>Cupom inválido ou expirado</p>
+                    <p className={errorClass} style={{ fontFamily: 'var(--font-poppins)' }}>Cupom inválido ou expirado</p>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-1 sm:col-span-2">
-                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>Observações</label>
-                  <textarea {...register('notes')} rows={3}
+                  <label className={labelClass} style={{ fontFamily: 'var(--font-poppins)' }}>Observações</label>
+                  <textarea
+                    {...register('notes')}
+                    rows={3}
                     placeholder="Alergias, preferências ou outras informações importantes (opcional)"
-                    className="w-full rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors resize-none" />
-                  {errors.notes && <p className="text-[11px] text-[#C62828]">{errors.notes.message}</p>}
+                    className={`${inputClass} resize-none`}
+                  />
+                  {errors.notes && <p className={errorClass}>{errors.notes.message}</p>}
                 </div>
               </div>
             </div>
