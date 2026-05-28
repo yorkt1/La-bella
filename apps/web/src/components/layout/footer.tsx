@@ -142,9 +142,14 @@ export function Footer() {
           <p className="text-xs text-white/40">
             © {new Date().getFullYear()} La Bella Infiní. Todos os direitos reservados.
           </p>
-          <p className="text-xs text-white/40">
-            CNPJ 00.000.000/0001-00 · Política de Privacidade · LGPD
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-white/40">
+              CNPJ 00.000.000/0001-00 · Política de Privacidade · LGPD
+            </p>
+            <Link href="/admin/login" className="text-xs text-white/20 hover:text-white/50 transition-colors">
+              Área restrita
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
