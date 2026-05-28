@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd ../.. && npx turbo build --filter=admin",
-  "installCommand": "cd ../.. && npm install",
-  "framework": "nextjs"
-}
