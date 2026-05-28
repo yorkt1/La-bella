@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { addMinutes, parseISO } from 'date-fns'
 import { z } from 'zod'
 
@@ -9,7 +9,7 @@ const createBookingSchema = z.object({
   client_email: z.string().email().optional().or(z.literal('')),
   service_id: z.string().uuid(),
   professional_id: z.string().uuid().optional(),
-  starts_at: z.string().datetime(),
+  starts_at: z.string().min(1),
   notes: z.string().max(500).optional(),
   coupon_code: z.string().optional(),
 })
@@ -50,9 +50,10 @@ export async function POST(request: Request) {
   const { client_name, client_phone, client_email, service_id, professional_id, starts_at, notes, coupon_code } = parsed.data
 
   const supabase = await createClient()
+  const admin = await createAdminClient()
 
-  // Upsert cliente por telefone
-  const { data: clientData, error: clientError } = await supabase
+  // Upsert cliente por telefone (service role para bypassar RLS)
+  const { data: clientData, error: clientError } = await admin
     .from('clients')
     .upsert({ name: client_name, phone: client_phone, email: client_email || null } as never, {
       onConflict: 'phone',
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
   const client = clientData as { id: string }
 
   // Busca duração e preço do serviço
-  const { data: serviceData } = await supabase
+  const { data: serviceData } = await admin
     .from('services')
     .select('duration_minutes, price')
     .eq('id', service_id)
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
   // Valida cupom
   let discountAmount = 0
   if (coupon_code) {
-    const { data: promoData } = await supabase
+    const { data: promoData } = await admin
       .from('promotions')
       .select('discount_type, discount_value')
       .eq('coupon_code', coupon_code.toUpperCase())
@@ -98,7 +99,7 @@ export async function POST(request: Request) {
   }
 
   // Cria agendamento
-  const { data: bookingData, error: bookingError } = await supabase
+  const { data: bookingData, error: bookingError } = await admin
     .from('bookings')
     .insert({
       client_id: client.id,
@@ -118,20 +119,20 @@ export async function POST(request: Request) {
   const booking = bookingData as { id: string; starts_at: string; ends_at: string; status: string }
 
   // Pontos de boas-vindas no primeiro agendamento
-  const { count } = await supabase
+  const { count } = await admin
     .from('bookings')
     .select('*', { count: 'exact', head: true })
     .eq('client_id', client.id)
 
   if (count === 1) {
-    await supabase.from('loyalty_transactions').insert({
+    await admin.from('loyalty_transactions').insert({
       client_id: client.id,
       booking_id: booking.id,
       type: 'bonus',
       points: 20,
       description: 'Bônus de boas-vindas — primeiro agendamento',
     } as never)
-    await supabase.from('clients').update({ loyalty_points: 20 } as never).eq('id', client.id)
+    await admin.from('clients').update({ loyalty_points: 20 } as never).eq('id', client.id)
   }
 
   return NextResponse.json(booking, { status: 201 })

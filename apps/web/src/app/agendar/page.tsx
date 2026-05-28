@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
-import { Calendar, Clock, CheckCircle } from 'lucide-react'
+import { Calendar, Clock, CheckCircle, Tag } from 'lucide-react'
 
 const schema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -15,6 +15,7 @@ const schema = z.object({
   service_id: z.string().min(1, 'Selecione um serviço'),
   date: z.string().min(1, 'Selecione uma data'),
   starts_at: z.string().min(1, 'Selecione um horário'),
+  coupon_code: z.string().optional(),
   notes: z.string().max(500).optional(),
 })
 
@@ -47,6 +48,8 @@ export default function AgendarPage() {
   const [services, setServices] = useState<Service[]>([])
   const [slots, setSlots] = useState<Slot[]>([])
   const [loadingSlots, setLoadingSlots] = useState(false)
+  const [couponStatus, setCouponStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle')
+  const [couponDiscount, setCouponDiscount] = useState<string | null>(null)
 
   const {
     register,
@@ -60,6 +63,7 @@ export default function AgendarPage() {
   const selectedDate = watch('date')
   const selectedStartsAt = watch('starts_at')
   const selectedTime = selectedStartsAt ? selectedStartsAt.slice(11, 16) : ''
+  const couponValue = watch('coupon_code')
 
   // Load services on mount
   useEffect(() => {
@@ -83,6 +87,25 @@ export default function AgendarPage() {
       .catch(() => setLoadingSlots(false))
   }, [selectedServiceId, selectedDate, setValue])
 
+  async function checkCoupon() {
+    const code = couponValue?.trim().toUpperCase()
+    if (!code) return
+    setCouponStatus('checking')
+    setCouponDiscount(null)
+    try {
+      const res = await fetch(`/api/promotions/validate?code=${encodeURIComponent(code)}`)
+      if (res.ok) {
+        const data = await res.json()
+        setCouponStatus('valid')
+        setCouponDiscount(data.discount_type === 'percent' ? `${data.discount_value}% de desconto` : `R$ ${data.discount_value.toFixed(2).replace('.', ',')} de desconto`)
+      } else {
+        setCouponStatus('invalid')
+      }
+    } catch {
+      setCouponStatus('invalid')
+    }
+  }
+
   async function onSubmit(data: FormData) {
     setSubmitError(null)
     try {
@@ -95,6 +118,7 @@ export default function AgendarPage() {
           client_email: data.email || undefined,
           service_id: data.service_id,
           starts_at: data.starts_at,
+          coupon_code: data.coupon_code?.trim().toUpperCase() || undefined,
           notes: data.notes || undefined,
         }),
       })
@@ -261,6 +285,41 @@ export default function AgendarPage() {
                     </div>
                   )}
                   {errors.starts_at && <p className="text-[11px] text-[#C62828]">{errors.starts_at.message}</p>}
+                </div>
+
+                <div className="flex flex-col gap-1 sm:col-span-2">
+                  <label className="text-[11px] font-medium uppercase tracking-[0.05em] text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                    <Tag size={10} className="inline mr-1" />Cupom de desconto
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      {...register('coupon_code')}
+                      placeholder="Código do cupom (opcional)"
+                      onChange={e => {
+                        e.target.value = e.target.value.toUpperCase()
+                        register('coupon_code').onChange(e)
+                        setCouponStatus('idle')
+                        setCouponDiscount(null)
+                      }}
+                      className="flex-1 rounded-xl border border-[#EAE0DC] bg-white px-4 py-3 text-sm text-[#1E1E1E] placeholder-[#7A5C52]/40 focus:outline-none focus:ring-2 focus:ring-[#C89B7B]/40 focus:border-[#C89B7B] transition-colors uppercase"
+                      style={{ fontFamily: 'var(--font-poppins)' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={checkCoupon}
+                      disabled={!couponValue?.trim() || couponStatus === 'checking'}
+                      className="px-4 py-3 border border-[#EAE0DC] rounded-xl text-xs text-[#7A5C52] hover:border-[#C89B7B] transition-all disabled:opacity-40"
+                      style={{ fontFamily: 'var(--font-poppins)' }}
+                    >
+                      {couponStatus === 'checking' ? '...' : 'Aplicar'}
+                    </button>
+                  </div>
+                  {couponStatus === 'valid' && couponDiscount && (
+                    <p className="text-[11px] text-[#2E7D32]" style={{ fontFamily: 'var(--font-poppins)' }}>✓ Cupom válido — {couponDiscount}</p>
+                  )}
+                  {couponStatus === 'invalid' && (
+                    <p className="text-[11px] text-[#C62828]" style={{ fontFamily: 'var(--font-poppins)' }}>Cupom inválido ou expirado</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-1 sm:col-span-2">

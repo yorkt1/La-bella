@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import { addMinutes, parseISO, format, setHours, setMinutes } from 'date-fns'
 
 const WORKING_HOURS = { start: 9, end: 19 }
@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'serviceId e date são obrigatórios' }, { status: 400 })
   }
 
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { data: service, error: serviceError } = await supabase
     .from('services')
