@@ -60,6 +60,13 @@ export function Header() {
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-4">
+          <Link
+            href="/cliente"
+            className="text-white/50 hover:text-white text-[11px] tracking-widest uppercase transition-colors"
+            style={{ fontFamily: 'var(--font-poppins)' }}
+          >
+            Meus Agendamentos
+          </Link>
           <a
             href="https://wa.me/5511999999999"
             target="_blank"
@@ -102,6 +109,14 @@ export function Header() {
               {label}
             </Link>
           ))}
+          <Link
+            href="/cliente"
+            onClick={() => setMobileOpen(false)}
+            className="text-white/60 text-xs tracking-widest uppercase text-center"
+            style={{ fontFamily: 'var(--font-poppins)' }}
+          >
+            Meus Agendamentos
+          </Link>
           <Link
             href="/agendar"
             onClick={() => setMobileOpen(false)}
