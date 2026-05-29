@@ -180,7 +180,7 @@ export default function ClienteFichaPage({ params }: { params: Promise<{ id: str
                           {fmtDate(b.starts_at as string)} {staff ? `· ${staff.name}` : ''}
                         </p>
                       </div>
-                      {b.amount_paid && (
+                      {b.amount_paid != null && (
                         <span className="text-sm font-medium text-[#1E1E1E] shrink-0" style={{ fontFamily: 'var(--font-poppins)' }}>
                           {fmt(b.amount_paid as number)}
                         </span>

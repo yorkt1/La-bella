@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     .eq('is_visible', true)
     .lte('starts_at', now)
     .gte('ends_at', now)
-    .single()
+    .single() as { data: { id: string; title: string; discount_type: string; discount_value: number; max_uses: number | null; uses_count: number } | null; error: unknown }
 
   if (error || !data) return NextResponse.json({ error: 'Invalid or expired coupon' }, { status: 404 })
 

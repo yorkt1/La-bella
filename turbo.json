@@ -8,7 +8,21 @@
       "env": [
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY"
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "ZAPI_INSTANCE_ID",
+        "ZAPI_TOKEN",
+        "ZAPI_CLIENT_TOKEN",
+        "MP_ACCESS_TOKEN",
+        "NEXT_PUBLIC_MP_PUBLIC_KEY",
+        "RESEND_API_KEY",
+        "NEXT_PUBLIC_GOOGLE_MAPS_KEY",
+        "INSTAGRAM_ACCESS_TOKEN",
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_ADMIN_URL",
+        "EVOLUTION_API_URL",
+        "EVOLUTION_API_KEY",
+        "EVOLUTION_INSTANCE",
+        "ADMIN_WHATSAPP_PHONE"
       ]
     },
     "dev": {

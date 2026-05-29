@@ -183,7 +183,7 @@ export default function ClientePage() {
                               {s.label}
                             </div>
                           </div>
-                          {b.notes && (
+                          {!!b.notes && (
                             <p className="mt-3 text-xs text-[#7A5C52]/60 bg-[#FDFAF8] rounded-lg px-3 py-2" style={{ fontFamily: 'var(--font-poppins)' }}>
                               {b.notes as string}
                             </p>

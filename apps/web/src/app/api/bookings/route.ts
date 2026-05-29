@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
-import { addMinutes, parseISO } from 'date-fns'
+import { notifyAdmin, sendWhatsApp } from '@/lib/whatsapp'
+import { addMinutes, parseISO, format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { z } from 'zod'
 
 const createBookingSchema = z.object({
@@ -134,6 +136,20 @@ export async function POST(request: Request) {
     } as never)
     await admin.from('clients').update({ loyalty_points: 20 } as never).eq('id', client.id)
   }
+
+  // Notificações WhatsApp (fire-and-forget)
+  const dateLabel = format(parseISO(booking.starts_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+  const { data: serviceData2 } = await admin.from('services').select('name').eq('id', service_id).single()
+  const serviceName = (serviceData2 as { name: string } | null)?.name ?? 'serviço'
+
+  notifyAdmin(
+    `🗓 *Novo agendamento*\n👤 ${client_name}\n📞 ${client_phone}\n💅 ${serviceName}\n📅 ${dateLabel}`
+  ).catch(() => {})
+
+  sendWhatsApp(
+    client_phone,
+    `Olá, ${client_name}! 🌸\n\nSeu agendamento foi recebido com sucesso!\n\n💅 *${serviceName}*\n📅 *${dateLabel}*\n\nResponda *SIM* para confirmar ou *CANCELAR* para cancelar (até 24h antes).\n\n_La Belle Infini_`
+  ).catch(() => {})
 
   return NextResponse.json(booking, { status: 201 })
 }
