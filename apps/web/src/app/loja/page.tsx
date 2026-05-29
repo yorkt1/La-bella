@@ -138,7 +138,7 @@ export default async function LojaPage() {
                                 {fmt(product.price)}
                               </span>
                               <a
-                                href="https://wa.me/5548996156188"
+                                href="https://wa.me/5548991247324"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="text-xs px-3 py-1.5 bg-[#25D366] text-white rounded-full hover:bg-[#20BD5B] transition-colors"

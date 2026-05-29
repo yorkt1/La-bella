@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Users, Award, Star, MessageCircle } from 'lucide-react'
 
@@ -100,25 +101,18 @@ export function HeroSection() {
           transition={{ duration: 1.1, ease: 'easeOut', delay: 0.15 }}
           className="relative hidden lg:block"
         >
-          {/* Main blob */}
+          {/* Main photo */}
           <div
-            className="relative w-full aspect-[4/5] bg-gradient-to-br from-[#F6E6E6] via-[#EAD4C8] to-[#E8D5A3] flex items-center justify-center"
+            className="relative w-full aspect-[4/5] overflow-hidden"
             style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}
           >
-            <div className="text-center">
-              <p
-                className="text-5xl font-light text-[#C89B7B]/50 italic"
-                style={{ fontFamily: 'var(--font-cormorant)' }}
-              >
-                La Bella
-              </p>
-              <p
-                className="text-lg font-light text-[#D4AF37]/60 tracking-[0.4em] uppercase"
-                style={{ fontFamily: 'var(--font-cormorant)' }}
-              >
-                Infiní
-              </p>
-            </div>
+            <Image
+              src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018046/foto_central_da_dona_ezzmtr.jpg"
+              alt="La Belle Infiní"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
 
           {/* Floating card — agendamento */}

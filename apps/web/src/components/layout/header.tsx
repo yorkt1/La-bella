@@ -69,7 +69,7 @@ export function Header() {
             Meus Agendamentos
           </Link>
           <a
-            href="https://wa.me/5548996156188"
+            href="https://wa.me/5548991247324"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"

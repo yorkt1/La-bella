@@ -2,11 +2,11 @@ import Link from 'next/link'
 import { Instagram, Facebook, MapPin, Phone, Clock } from 'lucide-react'
 
 const services = [
-  { label: 'Limpeza de Pele', href: '/servicos/limpeza-de-pele' },
-  { label: 'Design de Sobrancelha', href: '/servicos/design-sobrancelha' },
-  { label: 'Extensão de Cílios', href: '/servicos/extensao-cilios' },
-  { label: 'Peeling Facial', href: '/servicos/peeling-facial' },
-  { label: 'Drenagem Linfática', href: '/servicos/drenagem-linfatica' },
+  { label: 'Maquiagem para Noiva', href: '/servicos' },
+  { label: 'Maquiagem Social', href: '/servicos' },
+  { label: 'Maquiagem Artística', href: '/servicos' },
+  { label: 'Pacote Maquiagem + Penteado', href: '/servicos' },
+  { label: 'Bronzeamento', href: '/servicos' },
 ]
 
 const links = [
@@ -39,11 +39,11 @@ export function Footer() {
             </p>
           </div>
           <p className="text-sm leading-relaxed mb-6">
-            Clínica estética premium dedicada a realçar sua beleza natural com tratamentos de alto padrão.
+            Espaço completo de beleza e bem-estar em Ingleses, Florianópolis. Maquiagem, unhas, bronzeamento e muito mais.
           </p>
           <div className="flex gap-4">
             <a
-              href="https://instagram.com/labella"
+              href="https://www.instagram.com/labelleinfini/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/50 hover:text-[#D4AF37] transition-colors"
@@ -118,12 +118,12 @@ export function Footer() {
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
               <MapPin size={16} className="text-[#C89B7B] mt-0.5 shrink-0" />
-              <span className="text-sm">Rua das Flores, 123 — Jardins, São Paulo/SP</span>
+              <span className="text-sm">Rodovia Armando Calil Bulos, 5058 — Ingleses, Florianópolis/SC</span>
             </li>
             <li className="flex items-center gap-3">
               <Phone size={16} className="text-[#C89B7B] shrink-0" />
-              <a href="tel:+5511999999999" className="text-sm hover:text-[#D4AF37] transition-colors">
-                (11) 99999-9999
+              <a href="tel:+5551991517799" className="text-sm hover:text-[#D4AF37] transition-colors">
+                (51) 99151-7799
               </a>
             </li>
             <li className="flex items-start gap-3">
@@ -144,7 +144,7 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <p className="text-xs text-white/40">
-              CNPJ 00.000.000/0001-00 · Política de Privacidade · LGPD
+              labelleinfini@gmail.com · Ingleses, Florianópolis/SC
             </p>
             <Link href="/admin/login" className="text-xs text-white/20 hover:text-white/50 transition-colors">
               Área restrita

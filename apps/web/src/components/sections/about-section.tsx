@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Shield, Award, Heart, Sparkles } from 'lucide-react'
 
 const differentials = [
@@ -29,21 +30,13 @@ export function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
         {/* Visual */}
         <div className="relative order-2 lg:order-1">
-          <div className="aspect-[4/3] bg-gradient-to-br from-[#FDFAF8] to-[#E8D5A3] rounded-3xl flex items-center justify-center relative overflow-hidden">
-            <div className="text-center px-8">
-              <p
-                className="text-6xl font-light text-[#C89B7B]/30 italic leading-none"
-                style={{ fontFamily: 'var(--font-cormorant)' }}
-              >
-                La Bella
-              </p>
-              <p
-                className="text-2xl font-light text-[#D4AF37]/40 tracking-[0.4em] uppercase mt-2"
-                style={{ fontFamily: 'var(--font-cormorant)' }}
-              >
-                Infiní
-              </p>
-            </div>
+          <div className="aspect-[4/3] rounded-3xl relative overflow-hidden">
+            <Image
+              src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_fachada_tssmkt.jpg"
+              alt="La Belle Infiní — Fachada"
+              fill
+              className="object-cover"
+            />
           </div>
 
           {/* Experience badge */}
@@ -83,9 +76,9 @@ export function AboutSection() {
             className="text-[#7A5C52]/80 text-sm leading-relaxed mb-8"
             style={{ fontFamily: 'var(--font-poppins)' }}
           >
-            Fundada com a missão de oferecer tratamentos estéticos de excelência, a La Bella Infiní
-            é um espaço dedicado ao seu bem-estar e autoestima. Nossa equipe de especialistas
-            combina técnicas avançadas com produtos de primeira linha para resultados que encantam.
+            A La Belle Infiní é um espaço completo de beleza e bem-estar em Ingleses, Florianópolis.
+            Oferecemos maquiagem, unhas, bronzeamento, estética e muito mais — tudo em um único lugar,
+            com profissionais dedicadas a realçar a sua beleza com carinho e excelência.
           </p>
 
           <div className="grid sm:grid-cols-2 gap-5">

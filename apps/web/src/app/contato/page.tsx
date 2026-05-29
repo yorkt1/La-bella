@@ -34,9 +34,9 @@ export default function ContatoPage() {
               {/* Info */}
               <div className="space-y-6">
                 {[
-                  { icon: MapPin, label: 'Endereço', value: 'Rua das Flores, 123 — Jardins, São Paulo/SP, CEP 01310-000' },
-                  { icon: Phone, label: 'Telefone / WhatsApp', value: '(11) 99999-9999' },
-                  { icon: Mail, label: 'E-mail', value: 'contato@labellainfini.com.br' },
+                  { icon: MapPin, label: 'Endereço', value: 'Rodovia Armando Calil Bulos, 5058 — Ingleses, Florianópolis/SC' },
+                  { icon: Phone, label: 'Telefone / WhatsApp', value: '(51) 99151-7799' },
+                  { icon: Mail, label: 'E-mail', value: 'labelleinfini@gmail.com' },
                   { icon: Clock, label: 'Horários', value: 'Seg–Sex: 09h às 19h  |  Sábado: 09h às 16h' },
                 ].map(({ icon: Icon, label, value }) => (
                   <div key={label} className="bg-white border border-[#EAE0DC] rounded-2xl p-6 flex items-start gap-4">
@@ -61,7 +61,7 @@ export default function ContatoPage() {
                 ))}
 
                 <a
-                  href="https://wa.me/5511999999999"
+                  href="https://wa.me/5551991517799"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 bg-[#25D366] text-white text-xs font-medium tracking-widest uppercase py-4 rounded-full hover:bg-[#20BD5B] transition-colors w-full"
@@ -80,13 +80,13 @@ export default function ContatoPage() {
                     className="text-sm text-[#7A5C52]"
                     style={{ fontFamily: 'var(--font-poppins)' }}
                   >
-                    Rua das Flores, 123 — Jardins
+                    Rodovia Armando Calil Bulos, 5058
                   </p>
                   <p
                     className="text-xs text-[#7A5C52]/60 mt-1"
                     style={{ fontFamily: 'var(--font-poppins)' }}
                   >
-                    São Paulo/SP
+                    Ingleses — Florianópolis/SC
                   </p>
                 </div>
               </div>
