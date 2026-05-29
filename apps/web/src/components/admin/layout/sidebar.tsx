@@ -51,13 +51,13 @@ export function Sidebar({ onClose }: SidebarProps) {
             className="text-xl font-light text-white tracking-[0.3em] uppercase leading-none"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
-            La Bella
+            La Belle
           </p>
           <p
             className="text-[10px] font-light text-[#D4AF37] tracking-[0.5em] uppercase"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
-            Infiní
+            Infini
           </p>
         </div>
         {onClose && (

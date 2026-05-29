@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Contato',
-  description: 'Entre em contato com a La Bella Infiní. Endereço, telefone, WhatsApp e horários de funcionamento.',
+  description: 'Entre em contato com a La Belle Infini. Endereço, telefone, WhatsApp e horários de funcionamento.',
 }
 
 export default function ContatoPage() {

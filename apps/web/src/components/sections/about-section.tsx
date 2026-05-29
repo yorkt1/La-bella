@@ -33,7 +33,7 @@ export function AboutSection() {
           <div className="aspect-[4/3] rounded-3xl relative overflow-hidden">
             <Image
               src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_fachada_tssmkt.jpg"
-              alt="La Belle Infiní — Fachada"
+              alt="La Belle Infini — Fachada"
               fill
               className="object-cover"
             />
@@ -76,7 +76,7 @@ export function AboutSection() {
             className="text-[#7A5C52]/80 text-sm leading-relaxed mb-8"
             style={{ fontFamily: 'var(--font-poppins)' }}
           >
-            A La Belle Infiní é um espaço completo de beleza e bem-estar em Ingleses, Florianópolis.
+            A La Belle Infini é um espaço completo de beleza e bem-estar em Ingleses, Florianópolis.
             Oferecemos maquiagem, unhas, bronzeamento, estética e muito mais — tudo em um único lugar,
             com profissionais dedicadas a realçar a sua beleza com carinho e excelência.
           </p>

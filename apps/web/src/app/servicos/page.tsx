@@ -6,7 +6,7 @@ import { Footer } from '@/components/layout/footer'
 import { ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Serviços | La Belle Infiní',
+  title: 'Serviços | La Belle Infini',
   description: 'Maquiagem profissional, unhas, bronzeamento e muito mais em Ingleses, Florianópolis. Conheça nossos serviços e valores.',
 }
 

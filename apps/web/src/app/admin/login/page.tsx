@@ -50,13 +50,13 @@ export default function LoginPage() {
             className="text-3xl font-light text-white tracking-[0.3em] uppercase"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
-            La Bella
+            La Belle
           </p>
           <p
             className="text-sm font-light text-[#D4AF37] tracking-[0.5em] uppercase"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
-            Infiní
+            Infini
           </p>
           <p
             className="text-white/40 text-xs tracking-widest uppercase mt-3"

@@ -26,16 +26,16 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | La Bella Infiní',
-    default: 'La Bella Infiní — Clínica Estética Premium',
+    template: '%s | La Belle Infini',
+    default: 'La Belle Infini — Beleza & Estética em Florianópolis',
   },
   description:
-    'Tratamentos estéticos de alto padrão com agendamento online 24h. Facial, cílios, sobrancelhas e muito mais. Agende agora!',
+    'Espaço completo de beleza em Ingleses, Florianópolis. Maquiagem profissional, unhas, bronzeamento, estética e muito mais. Agende online!',
   keywords: ['clínica estética', 'agendamento online', 'facial', 'cílios', 'sobrancelhas', 'beleza'],
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'La Bella Infiní',
+    siteName: 'La Belle Infini',
   },
 }
 
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="pt-BR"
       className={`${cormorant.variable} ${playfair.variable} ${poppins.variable}`}
     >
-      <body className="bg-white antialiased">{children}</body>
+      <body className="bg-white antialiased overflow-x-hidden">{children}</body>
     </html>
   )
 }

@@ -35,13 +35,13 @@ export function Header() {
             className="text-2xl font-light text-white tracking-[0.3em] uppercase transition-colors group-hover:text-[#D4AF37]"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
-            La Bella
+            La Belle
           </span>
           <span
             className="text-xs font-light text-[#D4AF37] tracking-[0.5em] uppercase"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
-            Infiní
+            Infini
           </span>
         </Link>
 

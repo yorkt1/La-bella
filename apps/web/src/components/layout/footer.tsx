@@ -29,13 +29,13 @@ export function Footer() {
               className="text-2xl font-light text-white tracking-[0.3em] uppercase"
               style={{ fontFamily: 'var(--font-cormorant)' }}
             >
-              La Bella
+              La Belle
             </p>
             <p
               className="text-xs font-light text-[#D4AF37] tracking-[0.5em] uppercase"
               style={{ fontFamily: 'var(--font-cormorant)' }}
             >
-              Infiní
+              Infini
             </p>
           </div>
           <p className="text-sm leading-relaxed mb-6">
@@ -140,7 +140,7 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/40">
-            © {new Date().getFullYear()} La Bella Infiní. Todos os direitos reservados.
+            © {new Date().getFullYear()} La Belle Infini. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-4">
             <p className="text-xs text-white/40">

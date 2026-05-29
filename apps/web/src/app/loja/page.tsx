@@ -5,7 +5,7 @@ import { ShoppingBag } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'Loja | La Belle Infiní',
+  title: 'Loja | La Belle Infini',
   description: 'Produtos de beleza, cosméticos, perfumes, suplementos e muito mais. Ozontek e Mary Kay à pronta entrega.',
 }
 

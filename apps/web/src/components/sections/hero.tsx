@@ -13,27 +13,27 @@ const badges = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-[#FDFAF8] via-[#F6E6E6] to-[#E8D5A3]/20 flex items-center pt-24 overflow-hidden">
-      {/* Decorative circle */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#C89B7B]/8 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 -left-20 w-72 h-72 rounded-full bg-[#D4AF37]/6 blur-3xl pointer-events-none" />
+    <section className="relative h-screen max-h-screen bg-gradient-to-br from-[#FDFAF8] via-[#F6E6E6] to-[#E8D5A3]/20 flex items-center overflow-hidden">
+      {/* Decorative blobs — ficam dentro do overflow-hidden */}
+      <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-[#C89B7B]/8 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 -left-20 w-64 h-64 rounded-full bg-[#D4AF37]/6 blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center w-full py-16">
-        {/* Text */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-center w-full pt-20">
+        {/* Texto */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
         >
           <p
-            className="text-[#C89B7B] text-xs tracking-[0.5em] uppercase mb-5"
+            className="text-[#C89B7B] text-[10px] tracking-[0.5em] uppercase mb-4"
             style={{ fontFamily: 'var(--font-poppins)' }}
           >
-            Clínica Estética Premium
+            Beleza & Estética — Florianópolis
           </p>
 
           <h1
-            className="text-5xl lg:text-[4.5rem] font-light text-[#1E1E1E] leading-[1.1] mb-6"
+            className="text-4xl lg:text-5xl xl:text-[3.5rem] font-light text-[#1E1E1E] leading-[1.1] mb-5"
             style={{ fontFamily: 'var(--font-cormorant)' }}
           >
             Realce sua
@@ -44,24 +44,24 @@ export function HeroSection() {
           </h1>
 
           <p
-            className="text-[#7A5C52]/80 text-base leading-relaxed mb-10 max-w-md"
+            className="text-[#7A5C52]/80 text-sm leading-relaxed mb-7 max-w-md"
             style={{ fontFamily: 'var(--font-poppins)' }}
           >
-            Tratamentos estéticos de alto padrão com profissionais especializadas.
+            Maquiagem, unhas, bronzeamento e estética em Ingleses.
             Agende online e transforme sua autoestima.
           </p>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             <Link
               href="/agendar"
-              className="bg-gradient-to-r from-[#C89B7B] to-[#7A5C52] text-white text-xs font-medium tracking-widest uppercase px-9 py-4 rounded-full hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#C89B7B]/25"
+              className="bg-gradient-to-r from-[#C89B7B] to-[#7A5C52] text-white text-[11px] font-medium tracking-widest uppercase px-8 py-3.5 rounded-full hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#C89B7B]/25"
               style={{ fontFamily: 'var(--font-poppins)' }}
             >
               Agendar Online
             </Link>
             <Link
               href="/servicos"
-              className="border border-[#D4AF37] text-[#D4AF37] text-xs font-medium tracking-widest uppercase px-9 py-4 rounded-full hover:bg-[#D4AF37]/10 transition-all duration-200"
+              className="border border-[#D4AF37] text-[#D4AF37] text-[11px] font-medium tracking-widest uppercase px-8 py-3.5 rounded-full hover:bg-[#D4AF37]/10 transition-all duration-200"
               style={{ fontFamily: 'var(--font-poppins)' }}
             >
               Ver Serviços
@@ -69,23 +69,17 @@ export function HeroSection() {
           </div>
 
           {/* Social proof */}
-          <div className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-[#EAE0DC]">
+          <div className="flex flex-wrap gap-6 mt-8 pt-7 border-t border-[#EAE0DC]">
             {badges.map(({ icon: Icon, value, label }) => (
-              <div key={label} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#C89B7B]/12 flex items-center justify-center">
-                  <Icon size={16} className="text-[#C89B7B]" />
+              <div key={label} className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#C89B7B]/12 flex items-center justify-center shrink-0">
+                  <Icon size={14} className="text-[#C89B7B]" />
                 </div>
                 <div>
-                  <p
-                    className="text-base font-semibold text-[#1E1E1E] leading-none"
-                    style={{ fontFamily: 'var(--font-playfair)' }}
-                  >
+                  <p className="text-sm font-semibold text-[#1E1E1E] leading-none" style={{ fontFamily: 'var(--font-playfair)' }}>
                     {value}
                   </p>
-                  <p
-                    className="text-xs text-[#7A5C52]/60 mt-0.5"
-                    style={{ fontFamily: 'var(--font-poppins)' }}
-                  >
+                  <p className="text-[10px] text-[#7A5C52]/60 mt-0.5" style={{ fontFamily: 'var(--font-poppins)' }}>
                     {label}
                   </p>
                 </div>
@@ -94,65 +88,59 @@ export function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Visual */}
+        {/* Foto */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.93 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.1, ease: 'easeOut', delay: 0.15 }}
+          transition={{ duration: 1, ease: 'easeOut', delay: 0.15 }}
           className="relative hidden lg:block"
         >
-          {/* Main photo */}
           <div
-            className="relative w-full aspect-[4/5] overflow-hidden"
-            style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}
+            className="relative w-full overflow-hidden"
+            style={{
+              aspectRatio: '4/5',
+              maxHeight: 'calc(100vh - 140px)',
+              borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%',
+            }}
           >
             <Image
               src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018046/foto_central_da_dona_ezzmtr.jpg"
-              alt="La Belle Infiní"
+              alt="La Belle Infini"
               fill
               className="object-cover"
               priority
             />
           </div>
 
-          {/* Floating card — agendamento */}
+          {/* Card agendamento */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="absolute -bottom-4 -left-6 bg-white rounded-2xl shadow-xl shadow-[#7A5C52]/10 p-4 flex items-center gap-3 max-w-[200px]"
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="absolute -bottom-2 -left-4 bg-white rounded-2xl shadow-xl shadow-[#7A5C52]/10 p-3.5 flex items-center gap-3 max-w-[190px]"
           >
-            <div className="w-10 h-10 rounded-full bg-[#E0F4F1] flex items-center justify-center shrink-0">
-              <Star size={16} className="text-[#006064] fill-[#006064]" />
+            <div className="w-9 h-9 rounded-full bg-[#E0F4F1] flex items-center justify-center shrink-0">
+              <Star size={14} className="text-[#006064] fill-[#006064]" />
             </div>
             <div>
-              <p
-                className="text-xs font-medium text-[#1E1E1E] leading-tight"
-                style={{ fontFamily: 'var(--font-poppins)' }}
-              >
+              <p className="text-xs font-medium text-[#1E1E1E] leading-tight" style={{ fontFamily: 'var(--font-poppins)' }}>
                 Agendamento online
               </p>
-              <p
-                className="text-[10px] text-[#7A5C52]/60 mt-0.5"
-                style={{ fontFamily: 'var(--font-poppins)' }}
-              >
+              <p className="text-[10px] text-[#7A5C52]/60 mt-0.5" style={{ fontFamily: 'var(--font-poppins)' }}>
                 Disponível 24h
               </p>
             </div>
           </motion.div>
 
-          {/* Floating card — whatsapp */}
+          {/* Card WhatsApp */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            className="absolute top-8 -right-4 bg-[#1E1E1E] rounded-2xl shadow-xl p-4 flex items-center gap-3"
+            transition={{ delay: 0.8, duration: 0.5 }}
+            className="absolute top-6 -right-3 bg-[#1E1E1E] rounded-2xl shadow-xl p-3.5 flex items-center gap-2.5"
           >
-            <MessageCircle size={18} className="text-[#25D366]" />
-            <p
-              className="text-[11px] text-white"
-              style={{ fontFamily: 'var(--font-poppins)' }}
-            >
+            <MessageCircle size={16} className="text-[#25D366] shrink-0" />
+            <p className="text-[11px] text-white" style={{ fontFamily: 'var(--font-poppins)' }}>
               Lembretes automáticos
             </p>
           </motion.div>
@@ -163,14 +151,11 @@ export function HeroSection() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        transition={{ delay: 1.4 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
       >
-        <div className="w-px h-12 bg-gradient-to-b from-[#C89B7B]/60 to-transparent" />
-        <p
-          className="text-[10px] text-[#C89B7B]/60 tracking-widest uppercase"
-          style={{ fontFamily: 'var(--font-poppins)' }}
-        >
+        <div className="w-px h-10 bg-gradient-to-b from-[#C89B7B]/60 to-transparent" />
+        <p className="text-[9px] text-[#C89B7B]/60 tracking-widest uppercase" style={{ fontFamily: 'var(--font-poppins)' }}>
           Explorar
         </p>
       </motion.div>

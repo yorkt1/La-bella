@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Sobre',
-  description: 'Conheça a La Bella Infiní, nossa história, missão e equipe de especialistas.',
+  description: 'Conheça a La Belle Infini, nossa história, missão e equipe de especialistas.',
 }
 
 const team = [
@@ -32,7 +32,7 @@ export default function SobrePage() {
               className="text-5xl lg:text-6xl font-light text-[#1E1E1E] mb-6"
               style={{ fontFamily: 'var(--font-cormorant)' }}
             >
-              Sobre a La Bella Infiní
+              Sobre a La Belle Infini
             </h1>
             <p
               className="text-[#7A5C52]/70 text-base leading-relaxed max-w-2xl mx-auto"

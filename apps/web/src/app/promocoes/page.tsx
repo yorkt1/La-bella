@@ -6,7 +6,7 @@ import { Tag, Clock } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Promoções',
-  description: 'Ofertas especiais e promoções exclusivas da La Bella Infiní.',
+  description: 'Ofertas especiais e promoções exclusivas da La Belle Infini.',
 }
 
 const promotions = [
