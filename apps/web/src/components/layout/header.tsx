@@ -6,6 +6,7 @@ import { Menu, X, MessageCircle } from 'lucide-react'
 
 const navLinks = [
   { href: '/servicos', label: 'Serviços' },
+  { href: '/loja', label: 'Loja' },
   { href: '/sobre', label: 'Sobre' },
   { href: '/promocoes', label: 'Promoções' },
   { href: '/contato', label: 'Contato' },
@@ -68,7 +69,7 @@ export function Header() {
             Meus Agendamentos
           </Link>
           <a
-            href="https://wa.me/5511999999999"
+            href="https://wa.me/5548996156188"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="WhatsApp"

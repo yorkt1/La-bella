@@ -15,19 +15,25 @@ import {
   Settings,
   LogOut,
   X,
+  ShoppingCart,
+  Package,
+  Receipt,
 } from 'lucide-react'
 
 const navItems = [
-  { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/admin/dashboard/agenda', icon: Calendar, label: 'Agenda' },
-  { href: '/admin/dashboard/clientes', icon: Users, label: 'Clientes' },
-  { href: '/admin/dashboard/servicos', icon: Scissors, label: 'Serviços' },
-  { href: '/admin/dashboard/promocoes', icon: Tag, label: 'Promoções' },
-  { href: '/admin/dashboard/financeiro', icon: DollarSign, label: 'Financeiro' },
-  { href: '/admin/dashboard/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
-  { href: '/admin/dashboard/fidelidade', icon: Gift, label: 'Fidelidade' },
-  { href: '/admin/dashboard/equipe', icon: UserCog, label: 'Equipe' },
-  { href: '/admin/dashboard/configuracoes', icon: Settings, label: 'Configurações' },
+  { href: '/admin/dashboard',                    icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/admin/dashboard/agenda',             icon: Calendar,        label: 'Agenda' },
+  { href: '/admin/dashboard/caixa',              icon: ShoppingCart,    label: 'Caixa' },
+  { href: '/admin/dashboard/clientes',           icon: Users,           label: 'Clientes' },
+  { href: '/admin/dashboard/servicos',           icon: Scissors,        label: 'Serviços' },
+  { href: '/admin/dashboard/produtos',           icon: Package,         label: 'Produtos' },
+  { href: '/admin/dashboard/vendas',             icon: Receipt,         label: 'Vendas' },
+  { href: '/admin/dashboard/promocoes',          icon: Tag,             label: 'Promoções' },
+  { href: '/admin/dashboard/financeiro',         icon: DollarSign,      label: 'Financeiro' },
+  { href: '/admin/dashboard/whatsapp',           icon: MessageCircle,   label: 'WhatsApp' },
+  { href: '/admin/dashboard/fidelidade',         icon: Gift,            label: 'Fidelidade' },
+  { href: '/admin/dashboard/equipe',             icon: UserCog,         label: 'Equipe' },
+  { href: '/admin/dashboard/configuracoes',      icon: Settings,        label: 'Configurações' },
 ]
 
 interface SidebarProps {
