@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X, MessageCircle } from 'lucide-react'
 
 const navLinks = [
+  { href: '/', label: 'Home' },
   { href: '/servicos', label: 'Serviços' },
   { href: '/loja', label: 'Loja' },
   { href: '/sobre', label: 'Sobre' },
@@ -15,6 +17,7 @@ const navLinks = [
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30)
@@ -47,16 +50,23 @@ export function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-white/70 hover:text-[#D4AF37] text-xs tracking-widest uppercase transition-colors duration-200"
-              style={{ fontFamily: 'var(--font-poppins)' }}
-            >
-              {label}
-            </Link>
-          ))}
+          {navLinks.map(({ href, label }) => {
+            const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`relative text-xs tracking-widest uppercase transition-colors duration-200 pb-0.5 ${
+                  isActive
+                    ? 'text-[#D4AF37] font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-[#D4AF37]'
+                    : 'text-white/70 hover:text-[#D4AF37]'
+                }`}
+                style={{ fontFamily: 'var(--font-poppins)' }}
+              >
+                {label}
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Actions */}
@@ -99,17 +109,22 @@ export function Header() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden border-t border-white/10 px-4 py-6 flex flex-col gap-5">
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMobileOpen(false)}
-              className="text-white/80 text-sm tracking-widest uppercase"
-              style={{ fontFamily: 'var(--font-poppins)' }}
-            >
-              {label}
-            </Link>
-          ))}
+          {navLinks.map(({ href, label }) => {
+            const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href)
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                className={`text-sm tracking-widest uppercase transition-colors ${
+                  isActive ? 'text-[#D4AF37] font-semibold' : 'text-white/80'
+                }`}
+                style={{ fontFamily: 'var(--font-poppins)' }}
+              >
+                {label}
+              </Link>
+            )
+          })}
           <Link
             href="/cliente"
             onClick={() => setMobileOpen(false)}
