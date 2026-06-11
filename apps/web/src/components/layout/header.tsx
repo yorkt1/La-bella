@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, X, MessageCircle } from 'lucide-react'
 
@@ -33,19 +34,15 @@ export function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex flex-col leading-none group">
-          <span
-            className="text-2xl font-light text-white tracking-[0.3em] uppercase transition-colors group-hover:text-[#D4AF37]"
-            style={{ fontFamily: 'var(--font-cormorant)' }}
-          >
-            La Belle
-          </span>
-          <span
-            className="text-xs font-light text-[#D4AF37] tracking-[0.5em] uppercase"
-            style={{ fontFamily: 'var(--font-cormorant)' }}
-          >
-            Infini
-          </span>
+        <Link href="/" className="flex items-center group">
+          <Image
+            src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_logo_derkfr.jpg"
+            alt="La Belle Infini"
+            width={160}
+            height={60}
+            className="h-11 w-auto object-contain transition-opacity group-hover:opacity-80"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Topbar } from '@/components/admin/layout/topbar'
-import { MessageCircle, Send, AlertCircle, Loader2 } from 'lucide-react'
+import { MessageCircle, Send, AlertCircle, Loader2, QrCode } from 'lucide-react'
 
 const templates = [
   { id: 'confirm',     label: 'Confirmação de Agendamento', preview: 'Olá, {nome}! Seu agendamento está confirmado para {data} às {hora} — {serviço}. Aguardamos você!' },
@@ -29,6 +29,10 @@ export default function WhatsAppPage() {
   const [segment, setSegment] = useState('all')
   const [sending, setSending] = useState(false)
   const [sendResult, setSendResult] = useState<string | null>(null)
+  const [qr, setQr] = useState<string | null>(null)
+  const [pairingCode, setPairingCode] = useState<string | null>(null)
+  const [connecting, setConnecting] = useState(false)
+  const [connectMsg, setConnectMsg] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/whatsapp/status')
@@ -40,8 +44,45 @@ export default function WhatsAppPage() {
       .catch(() => setStatus('disconnected'))
   }, [])
 
+  // Enquanto o QR está na tela, verifica a cada 4s se já conectou.
+  useEffect(() => {
+    if (!qr) return
+    const t = setInterval(() => {
+      fetch('/api/admin/whatsapp/status')
+        .then(r => r.json())
+        .then(d => { if (d.connected) { setStatus('connected'); setQr(null); setPairingCode(null) } })
+        .catch(() => {})
+    }, 4000)
+    return () => clearInterval(t)
+  }, [qr])
+
   const previewText = templates.find(t => t.id === selectedTemplate)?.preview ?? ''
   const messageText = selectedTemplate ? previewText : customMessage
+
+  async function handleConnect() {
+    setConnecting(true)
+    setConnectMsg(null)
+    setQr(null)
+    setPairingCode(null)
+    try {
+      const res = await fetch('/api/admin/whatsapp/connect')
+      const d = await res.json()
+      if (d.configured === false) {
+        setConnectMsg('Evolution API ainda não configurada. Defina EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE para gerar o QR real.')
+      } else if (d.qr) {
+        setQr(d.qr)
+        setPairingCode(d.pairingCode ?? null)
+      } else if (d.error) {
+        setConnectMsg(d.error)
+      } else {
+        setConnectMsg('Nenhum QR retornado — a instância pode já estar conectada.')
+      }
+    } catch {
+      setConnectMsg('Erro ao falar com o servidor.')
+    } finally {
+      setConnecting(false)
+    }
+  }
 
   async function handleSend() {
     if (!messageText.trim()) return
@@ -117,6 +158,85 @@ export default function WhatsAppPage() {
           </div>
           {status === 'not_configured' && (
             <AlertCircle size={16} className="text-[#C62828] shrink-0" />
+          )}
+        </div>
+
+        {/* Conexão por QR — SaaS: 1 número por salão, vale p/ site e painel */}
+        <div className="bg-white border border-[#EAE0DC] rounded-2xl p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <h3 className="text-base text-[#1E1E1E]" style={{ fontFamily: 'var(--font-playfair)' }}>
+                Conexão do WhatsApp
+              </h3>
+              <p className="text-xs text-[#7A5C52]/70 mt-1 max-w-md" style={{ fontFamily: 'var(--font-poppins)' }}>
+                Conecte o número do salão uma única vez. Vale para o site de agendamento (.com.br)
+                e para o painel — é o mesmo back.
+              </p>
+            </div>
+            {status !== 'connected' && (
+              <button
+                onClick={handleConnect}
+                disabled={connecting}
+                className="flex items-center gap-2 bg-[#25D366] text-white text-xs font-medium tracking-widest uppercase px-5 py-3 rounded-full hover:bg-[#20BD5B] transition-colors disabled:opacity-50"
+                style={{ fontFamily: 'var(--font-poppins)' }}
+              >
+                {connecting ? <Loader2 size={14} className="animate-spin" /> : <QrCode size={14} />}
+                {connecting ? 'Gerando...' : qr ? 'Gerar novo QR' : 'Conectar / Gerar QR'}
+              </button>
+            )}
+          </div>
+
+          {status === 'connected' ? (
+            <div className="mt-5 flex items-center gap-3 text-[#2E7D32]">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#2E7D32] animate-pulse" />
+              <p className="text-sm" style={{ fontFamily: 'var(--font-poppins)' }}>
+                Número conectado e pronto para enviar mensagens.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-5 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+              {/* Área do QR */}
+              <div className="w-48 h-48 shrink-0 rounded-2xl border border-dashed border-[#C89B7B]/50 bg-[#FDFAF8] flex items-center justify-center overflow-hidden">
+                {qr ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={qr} alt="QR Code do WhatsApp" className="w-full h-full object-contain" />
+                ) : (
+                  <div className="text-center px-4">
+                    <QrCode size={40} className="text-[#C89B7B]/50 mx-auto mb-2" />
+                    <p className="text-[10px] text-[#7A5C52]/50" style={{ fontFamily: 'var(--font-poppins)' }}>
+                      O QR code aparece aqui
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Instruções */}
+              <div className="flex-1 space-y-2">
+                <p className="text-[11px] font-medium text-[#7A5C52] uppercase tracking-[0.05em]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                  Como conectar
+                </p>
+                <ol className="text-xs text-[#7A5C52]/80 space-y-1 list-decimal list-inside" style={{ fontFamily: 'var(--font-poppins)' }}>
+                  <li>Abra o WhatsApp no celular do salão.</li>
+                  <li>Toque em <strong>Aparelhos conectados</strong> → <strong>Conectar aparelho</strong>.</li>
+                  <li>Aponte a câmera para o QR code ao lado.</li>
+                </ol>
+                {pairingCode && (
+                  <p className="text-xs text-[#7A5C52]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                    Ou use o código: <strong className="tracking-widest">{pairingCode}</strong>
+                  </p>
+                )}
+                {qr && (
+                  <p className="text-[11px] text-[#C89B7B] flex items-center gap-1.5" style={{ fontFamily: 'var(--font-poppins)' }}>
+                    <Loader2 size={11} className="animate-spin" /> Aguardando leitura...
+                  </p>
+                )}
+                {connectMsg && (
+                  <p className="text-[11px] text-[#C62828]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                    {connectMsg}
+                  </p>
+                )}
+              </div>
+            </div>
           )}
         </div>
 

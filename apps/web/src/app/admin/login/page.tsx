@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -45,21 +46,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#1E1E1E] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 flex flex-col items-center">
+          <Image
+            src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_logo_derkfr.jpg"
+            alt="La Belle Infini"
+            width={180}
+            height={70}
+            className="h-16 w-auto object-contain mb-3"
+            priority
+          />
           <p
-            className="text-3xl font-light text-white tracking-[0.3em] uppercase"
-            style={{ fontFamily: 'var(--font-cormorant)' }}
-          >
-            La Belle
-          </p>
-          <p
-            className="text-sm font-light text-[#D4AF37] tracking-[0.5em] uppercase"
-            style={{ fontFamily: 'var(--font-cormorant)' }}
-          >
-            Infini
-          </p>
-          <p
-            className="text-white/40 text-xs tracking-widest uppercase mt-3"
+            className="text-white/40 text-xs tracking-widest uppercase"
             style={{ fontFamily: 'var(--font-poppins)' }}
           >
             Painel Administrativo

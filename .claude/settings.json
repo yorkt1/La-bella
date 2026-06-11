@@ -5,7 +5,13 @@
       "Bash(npm install *)",
       "Bash(Select-String \"next|react|tailwind|turbo\")",
       "Bash(npm run *)",
-      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")"
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ -Force })",
+      "Bash(npx turbo *)",
+      "WebFetch(domain:www.softvances.com.br)",
+      "WebFetch(domain:res.cloudinary.com)",
+      "Bash(npx playwright *)",
+      "Bash(node -e ' *)"
     ]
   }
 }

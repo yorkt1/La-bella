@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Instagram, Facebook, MapPin, Phone, Clock } from 'lucide-react'
 
 const services = [
@@ -24,19 +25,14 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Brand */}
         <div className="lg:col-span-1">
-          <div className="mb-4">
-            <p
-              className="text-2xl font-light text-white tracking-[0.3em] uppercase"
-              style={{ fontFamily: 'var(--font-cormorant)' }}
-            >
-              La Belle
-            </p>
-            <p
-              className="text-xs font-light text-[#D4AF37] tracking-[0.5em] uppercase"
-              style={{ fontFamily: 'var(--font-cormorant)' }}
-            >
-              Infini
-            </p>
+          <div className="mb-5">
+            <Image
+              src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_logo_derkfr.jpg"
+              alt="La Belle Infini"
+              width={160}
+              height={60}
+              className="h-14 w-auto object-contain"
+            />
           </div>
           <p className="text-sm leading-relaxed mb-6">
             Espaço completo de beleza e bem-estar em Ingleses, Florianópolis. Maquiagem, unhas, bronzeamento e muito mais.

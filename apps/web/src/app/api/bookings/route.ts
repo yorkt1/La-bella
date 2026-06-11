@@ -117,7 +117,16 @@ export async function POST(request: Request) {
     .select('id, starts_at, ends_at, status')
     .single()
 
-  if (bookingError) return NextResponse.json({ error: bookingError.message }, { status: 500 })
+  if (bookingError) {
+    // 23P01 = exclusion_violation: o horário acabou de ser ocupado (anti-corrida).
+    if ((bookingError as { code?: string }).code === '23P01') {
+      return NextResponse.json(
+        { error: 'Esse horário acabou de ser ocupado. Escolha outro, por favor.' },
+        { status: 409 },
+      )
+    }
+    return NextResponse.json({ error: bookingError.message }, { status: 500 })
+  }
   const booking = bookingData as { id: string; starts_at: string; ends_at: string; status: string }
 
   // Pontos de boas-vindas no primeiro agendamento
