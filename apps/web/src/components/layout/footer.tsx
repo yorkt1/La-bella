@@ -142,9 +142,6 @@ export function Footer() {
             <p className="text-xs text-white/40">
               labelleinfini@gmail.com · Ingleses, Florianópolis/SC
             </p>
-            <Link href="/admin/login" className="text-xs text-white/20 hover:text-white/50 transition-colors">
-              Área restrita
-            </Link>
           </div>
         </div>
       </div>

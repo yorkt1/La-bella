@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import type { Slot } from '@/types'
+import { getVeltosSlots } from '@/lib/veltos'
 
+// Horários livres — calculados a partir da agenda do Veltos. Ver lib/veltos.ts.
 export function useAvailability(serviceId: string, date: string) {
   const [slots, setSlots] = useState<Slot[]>([])
   const [loading, setLoading] = useState(false)
@@ -12,13 +14,21 @@ export function useAvailability(serviceId: string, date: string) {
       setSlots([])
       return
     }
+    let active = true
     setLoading(true)
-    fetch(`/api/bookings/availability?serviceId=${serviceId}&date=${date}`)
-      .then(r => r.json())
-      .then(data => { setSlots(data); setLoading(false) })
-      .catch(() => setLoading(false))
+    getVeltosSlots(serviceId, date)
+      .then((s) => {
+        if (!active) return
+        setSlots(s)
+        setLoading(false)
+      })
+      .catch(() => {
+        if (active) setLoading(false)
+      })
+    return () => {
+      active = false
+    }
   }, [serviceId, date])
 
-  const available = slots.filter(s => s.available)
-  return { slots: available, loading }
+  return { slots, loading }
 }

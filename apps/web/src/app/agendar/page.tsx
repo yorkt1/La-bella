@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/footer'
 import { Calendar, Clock, CheckCircle, Tag } from 'lucide-react'
 import { useServices } from '@/hooks/useServices'
 import { useAvailability } from '@/hooks/useAvailability'
+import { bookVeltos } from '@/lib/veltos'
 
 const schema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -91,22 +92,16 @@ export default function AgendarPage() {
   async function onSubmit(data: FormData) {
     setSubmitError(null)
     try {
-      const res = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          client_name: data.name,
-          client_phone: data.phone,
-          client_email: data.email || undefined,
-          service_id: data.service_id,
-          starts_at: data.starts_at,
-          coupon_code: data.coupon_code?.trim().toUpperCase() || undefined,
-          notes: data.notes || undefined,
-        }),
+      // Grava direto no Veltos (fonte única) via RPC pública. O agendamento cai na
+      // agenda da dona no painel Veltos. Ver lib/veltos.ts.
+      const res = await bookVeltos({
+        serviceId: data.service_id,
+        startsAt: data.starts_at,
+        name: data.name,
+        phone: data.phone,
       })
       if (!res.ok) {
-        const body = await res.json()
-        setSubmitError(body.error ?? 'Erro ao realizar agendamento. Tente novamente.')
+        setSubmitError(res.error ?? 'Erro ao realizar agendamento. Tente novamente.')
         return
       }
       setSubmitted(true)
