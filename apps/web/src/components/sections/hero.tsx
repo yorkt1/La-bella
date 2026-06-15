@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Users, Award, Star, MessageCircle } from 'lucide-react'
+import { Users, Award, Star } from 'lucide-react'
 
 const badges = [
   { icon: Users, value: '500+', label: 'clientes atendidas' },
@@ -93,18 +93,18 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: 'easeOut', delay: 0.15 }}
-          className="relative hidden lg:block"
+          className="relative hidden lg:flex items-center justify-center"
         >
           <div
-            className="relative w-full overflow-hidden"
+            className="relative w-full max-w-[420px] overflow-hidden"
             style={{
               aspectRatio: '4/5',
-              maxHeight: 'calc(100vh - 140px)',
-              borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%',
+              maxHeight: 'calc(100vh - 160px)',
+              borderRadius: '48% 52% 42% 58% / 48% 36% 64% 52%',
             }}
           >
             <Image
-              src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018046/foto_central_da_dona_ezzmtr.jpg"
+              src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1781557800/ChatGPT_Image_11_de_jun._de_2026_15_45_03_rozrwk.png"
               alt="La Belle Infini"
               fill
               className="object-cover"
@@ -117,7 +117,7 @@ export function HeroSection() {
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6, duration: 0.5 }}
-            className="absolute -bottom-2 -left-4 bg-white rounded-2xl shadow-xl shadow-[#7A5C52]/10 p-3.5 flex items-center gap-3 max-w-[190px]"
+            className="absolute -bottom-4 left-4 bg-white rounded-2xl shadow-xl shadow-[#7A5C52]/10 p-3.5 flex items-center gap-3 max-w-[190px]"
           >
             <div className="w-9 h-9 rounded-full bg-[#E0F4F1] flex items-center justify-center shrink-0">
               <Star size={14} className="text-[#006064] fill-[#006064]" />
@@ -130,19 +130,6 @@ export function HeroSection() {
                 Disponível 24h
               </p>
             </div>
-          </motion.div>
-
-          {/* Card WhatsApp */}
-          <motion.div
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="absolute top-6 -right-3 bg-[#1E1E1E] rounded-2xl shadow-xl p-3.5 flex items-center gap-2.5"
-          >
-            <MessageCircle size={16} className="text-[#25D366] shrink-0" />
-            <p className="text-[11px] text-white" style={{ fontFamily: 'var(--font-poppins)' }}>
-              Lembretes automáticos
-            </p>
           </motion.div>
         </motion.div>
       </div>

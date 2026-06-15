@@ -34,15 +34,25 @@ export function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center group">
-          <Image
-            src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_logo_derkfr.jpg"
-            alt="La Belle Infini"
-            width={160}
-            height={60}
-            className="h-11 w-auto object-contain transition-opacity group-hover:opacity-80"
-            priority
-          />
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-12 h-12 rounded-full bg-white/10 border border-white/10 overflow-hidden flex items-center justify-center transition-all duration-300 group-hover:border-[#D4AF37]">
+            <Image
+              src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_logo_derkfr.jpg"
+              alt="La Belle Infini"
+              width={44}
+              height={44}
+              className="h-full w-full object-cover"
+              priority
+            />
+          </div>
+          <div className="hidden md:flex flex-col leading-tight">
+            <span className="text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-poppins)' }}>
+              La Belle Infini
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.35em] text-white/60" style={{ fontFamily: 'var(--font-poppins)' }}>
+              Beleza & Estética
+            </span>
+          </div>
         </Link>
 
         {/* Desktop nav */}

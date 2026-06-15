@@ -10,7 +10,7 @@ function fmt(v: number) {
 
 // Catálogo completo de serviços — lido do Veltos (fonte única).
 export function ServicesCatalog() {
-  const { services, loading } = useServices()
+  const { services, loading, error } = useServices()
 
   // Agrupa por categoria, preservando a ordem.
   const groups = services.reduce<Record<string, typeof services>>((acc, s) => {
@@ -24,6 +24,15 @@ export function ServicesCatalog() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {loading ? (
           <p className="text-center text-[#7A5C52]/50 text-sm py-10">Carregando serviços…</p>
+        ) : error ? (
+          <div className="bg-[#FFEDEB] border border-[#F5C2B0] rounded-2xl p-8 text-center">
+            <p className="text-[#B12D2D] font-semibold mb-2" style={{ fontFamily: 'var(--font-poppins)' }}>
+              Não foi possível carregar o catálogo de serviços.
+            </p>
+            <p className="text-[#7A5C52]/70 text-sm" style={{ fontFamily: 'var(--font-poppins)' }}>
+              {error}
+            </p>
+          </div>
         ) : services.length === 0 ? (
           <p className="text-center text-[#7A5C52]/50 text-sm py-10">
             Em breve, nosso catálogo de serviços.

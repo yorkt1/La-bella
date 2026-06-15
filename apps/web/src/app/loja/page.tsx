@@ -4,6 +4,8 @@ import { Footer } from '@/components/layout/footer'
 import { ShoppingBag } from 'lucide-react'
 import { createAdminClient } from '@/lib/supabase/server'
 
+const SALON_ID = process.env.NEXT_PUBLIC_SALON_ID ?? ''
+
 export const metadata: Metadata = {
   title: 'Loja | La Belle Infini',
   description: 'Produtos de beleza, cosméticos, perfumes, suplementos e muito mais. Ozontek e Mary Kay à pronta entrega.',
@@ -19,15 +21,33 @@ function fmt(v: number) {
 }
 
 async function getProducts() {
+  if (!SALON_ID) return []
   try {
     const admin = await createAdminClient()
     const { data } = await admin
       .from('products')
-      .select('id, name, brand, category, description, price, stock_quantity, is_featured, image_url')
-      .eq('is_active', true)
-      .order('is_featured', { ascending: false })
-      .order('name')
-    return (data || []) as {
+      .select('id, nome, marca, categoria, preco, estoque')
+      .eq('salon_id', SALON_ID)
+      .eq('ativo', true)
+      .order('nome')
+    return ((data || []) as {
+      id: string
+      nome: string
+      marca: string | null
+      categoria: string | null
+      preco: number
+      estoque: number
+    }[]).map((p) => ({
+      id: p.id,
+      name: p.nome,
+      brand: p.marca,
+      category: p.categoria ?? 'outros',
+      description: null,
+      price: p.preco,
+      stock_quantity: p.estoque,
+      is_featured: false,
+      image_url: null,
+    })) as {
       id: string; name: string; brand: string | null; category: string
       description: string | null; price: number; stock_quantity: number
       is_featured: boolean; image_url: string | null

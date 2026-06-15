@@ -1,16 +1,4 @@
-// Integração do front (vitrine La Belle) com o sistema Veltos.
-// O front é só a casca — serviços, horários e agendamento vêm do Veltos via RPCs públicas
-// (anon key). Ver vault: "08 - Plano Adicional - Site .com.br".
-import { createClient } from '@/lib/supabase/client'
 import type { Service, Slot } from '@/types'
-
-export const SALON_ID = process.env.NEXT_PUBLIC_SALON_ID ?? ''
-
-// Cliente Supabase com rpc destipado (as RPCs do Veltos não estão no Database do front).
-type RpcClient = {
-  rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>
-}
-const rpc = () => createClient() as unknown as RpcClient
 
 interface VeltosService {
   id: string
@@ -19,11 +7,13 @@ interface VeltosService {
   duracao: number
   preco: number
 }
+
 interface VeltosPro {
   id: string
   nome: string
   horarios?: Record<string, { aberto: boolean; abre: string; fecha: string }>
 }
+
 interface VeltosSalon {
   id: string
   nome: string
@@ -34,12 +24,31 @@ interface VeltosSalon {
   profissionais: VeltosPro[]
 }
 
+interface VeltosPromotion {
+  id: string
+  titulo: string
+  descricao: string
+  codigo: string | null
+  tipo_desconto: 'percentual' | 'fixo'
+  valor_desconto: number
+  fim: string | null
+}
+
+export interface SitePromotion {
+  id: string
+  title: string
+  description: string
+  coupon: string | null
+  discountType: 'percentual' | 'fixo'
+  discountValue: number
+  expires: string | null
+}
+
 const WD = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
 const toMin = (hhmm: string) => Number(hhmm.split(':')[0]) * 60 + Number(hhmm.split(':')[1])
 const fmt = (m: number) =>
   `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
 
-/** Mapeia o serviço do Veltos para o tipo Service do front. */
 function mapService(s: VeltosService, i: number): Service {
   return {
     id: s.id,
@@ -56,25 +65,77 @@ function mapService(s: VeltosService, i: number): Service {
   }
 }
 
-let _salonCache: VeltosSalon | null = null
-/** Busca o salão (catálogo + horários + profissionais) do Veltos. Cacheado na sessão. */
-export async function getVeltosSalon(): Promise<VeltosSalon | null> {
-  if (_salonCache) return _salonCache
-  if (!SALON_ID) return null
-  const { data, error } = await rpc().rpc('public_salon', { p_salon: SALON_ID })
-  if (error || !data) return null
-  _salonCache = data as VeltosSalon
-  return _salonCache
+async function apiGet<T>(path: string): Promise<T | null> {
+  const res = await fetch(path, { cache: 'no-store' })
+  if (!res.ok) return null
+  return (await res.json()) as T
 }
 
-/** Lista de serviços reais do salão (do Veltos), no formato do front. */
+async function apiPost<T extends { ok?: boolean; error?: string }>(
+  path: string,
+  body: unknown,
+): Promise<T> {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const payload = (await res.json().catch(() => null)) as T | null
+  if (!res.ok) {
+    return { ok: false, error: payload?.error ?? 'Erro de conexão.' } as T
+  }
+  return (payload ?? ({ ok: false, error: 'Resposta inválida.' } as T))
+}
+
+let salonCache: VeltosSalon | null = null
+
+export async function getVeltosSalon(): Promise<VeltosSalon | null> {
+  if (salonCache) return salonCache
+  salonCache = await apiGet<VeltosSalon>('/api/veltos/salon')
+  return salonCache
+}
+
 export async function getVeltosServices(): Promise<Service[]> {
   const salon = await getVeltosSalon()
   if (!salon) return []
   return (salon.servicos ?? []).map(mapService)
 }
 
-/** Calcula os horários livres (slots) para um serviço numa data, lendo do Veltos. */
+export async function getVeltosPromotions(): Promise<SitePromotion[]> {
+  const data = await apiGet<VeltosPromotion[]>('/api/veltos/promotions')
+  if (!data) return []
+  return data.map((p) => ({
+    id: p.id,
+    title: p.titulo,
+    description: p.descricao,
+    coupon: p.codigo,
+    discountType: p.tipo_desconto,
+    discountValue: p.valor_desconto,
+    expires: p.fim,
+  }))
+}
+
+export async function validateVeltosCoupon(code: string): Promise<{
+  ok: boolean
+  error?: string
+  discountType?: 'percentual' | 'fixo'
+  discountValue?: number
+}> {
+  const res = await apiPost<{
+    ok?: boolean
+    error?: string
+    tipo_desconto?: 'percentual' | 'fixo'
+    valor_desconto?: number
+  }>('/api/veltos/coupon/validate', { code })
+
+  if (!res.ok) return { ok: false, error: res.error ?? 'Cupom inválido ou expirado.' }
+  return {
+    ok: true,
+    discountType: res.tipo_desconto,
+    discountValue: res.valor_desconto,
+  }
+}
+
 export async function getVeltosSlots(serviceId: string, date: string): Promise<Slot[]> {
   const salon = await getVeltosSalon()
   if (!salon) return []
@@ -86,13 +147,11 @@ export async function getVeltosSlots(serviceId: string, date: string): Promise<S
   const day = pro.horarios?.[wd] ?? salon.horarios?.[wd]
   if (!day || !day.aberto) return []
 
-  // Horários ocupados do profissional na data.
-  const { data } = await rpc().rpc('public_busy', {
-    p_salon: SALON_ID,
-    p_prof: pro.id,
-    p_data: date,
-  })
-  const busy = ((data as { hora_inicio: string; duracao: number }[] | null) ?? []).map((r) => ({
+  const data =
+    (await apiGet<{ hora_inicio: string; duracao: number }[]>(
+      `/api/veltos/busy?prof=${encodeURIComponent(pro.id)}&date=${encodeURIComponent(date)}`,
+    )) ?? []
+  const busy = data.map((r) => ({
     start: toMin(r.hora_inicio),
     end: toMin(r.hora_inicio) + r.duracao,
   }))
@@ -104,36 +163,34 @@ export async function getVeltosSlots(serviceId: string, date: string): Promise<S
   for (let t = open; t + dur <= close; t += 15) {
     const free = !busy.some((b) => t < b.end && t + dur > b.start)
     if (free) {
-      slots.push({ starts_at: `${date}T${fmt(t)}:00`, ends_at: `${date}T${fmt(t + dur)}:00`, available: true })
+      slots.push({
+        starts_at: `${date}T${fmt(t)}:00`,
+        ends_at: `${date}T${fmt(t + dur)}:00`,
+        available: true,
+      })
     }
   }
   return slots
 }
 
-/** Cria o agendamento no Veltos (grava no banco do sistema). */
 export async function bookVeltos(input: {
   serviceId: string
-  startsAt: string // "yyyy-MM-ddTHH:mm:00"
+  startsAt: string
   name: string
   phone: string
+  couponCode?: string
 }): Promise<{ ok: boolean; error?: string }> {
   const salon = await getVeltosSalon()
   const pro = salon?.profissionais?.[0]
   if (!salon || !pro) return { ok: false, error: 'Salão indisponível no momento.' }
 
-  const date = input.startsAt.slice(0, 10)
-  const hora = input.startsAt.slice(11, 16)
-  const { data, error } = await rpc().rpc('public_book', {
-    p_salon: SALON_ID,
-    p_prof: pro.id,
-    p_data: date,
-    p_hora: hora,
-    p_servico_ids: [input.serviceId],
-    p_cliente_nome: input.name,
-    p_cliente_tel: input.phone.replace(/\D/g, ''),
+  return await apiPost<{ ok: boolean; error?: string }>('/api/veltos/bookings', {
+    profId: pro.id,
+    date: input.startsAt.slice(0, 10),
+    hora: input.startsAt.slice(11, 16),
+    servicoIds: [input.serviceId],
+    clienteNome: input.name,
+    clienteTel: input.phone.replace(/\D/g, ''),
+    cupomCodigo: input.couponCode?.trim() || null,
   })
-  if (error) return { ok: false, error: (error as { message?: string }).message ?? 'Erro ao agendar.' }
-  const res = data as { ok: boolean; error?: string } | null
-  if (!res?.ok) return { ok: false, error: res?.error ?? 'Não foi possível agendar.' }
-  return { ok: true }
 }

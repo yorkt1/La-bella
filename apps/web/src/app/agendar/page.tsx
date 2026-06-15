@@ -9,7 +9,7 @@ import { Footer } from '@/components/layout/footer'
 import { Calendar, Clock, CheckCircle, Tag } from 'lucide-react'
 import { useServices } from '@/hooks/useServices'
 import { useAvailability } from '@/hooks/useAvailability'
-import { bookVeltos } from '@/lib/veltos'
+import { bookVeltos, validateVeltosCoupon } from '@/lib/veltos'
 
 const schema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -72,14 +72,13 @@ export default function AgendarPage() {
     setCouponStatus('checking')
     setCouponDiscount(null)
     try {
-      const res = await fetch(`/api/promotions/validate?code=${encodeURIComponent(code)}`)
-      if (res.ok) {
-        const data = await res.json()
+      const data = await validateVeltosCoupon(code)
+      if (data.ok && data.discountType && data.discountValue != null) {
         setCouponStatus('valid')
         setCouponDiscount(
-          data.discount_type === 'percent'
-            ? `${data.discount_value}% de desconto`
-            : `R$ ${data.discount_value.toFixed(2).replace('.', ',')} de desconto`
+          data.discountType === 'percentual'
+            ? `${data.discountValue}% de desconto`
+            : `R$ ${data.discountValue.toFixed(2).replace('.', ',')} de desconto`
         )
       } else {
         setCouponStatus('invalid')
@@ -99,6 +98,7 @@ export default function AgendarPage() {
         startsAt: data.starts_at,
         name: data.name,
         phone: data.phone,
+        couponCode: data.coupon_code,
       })
       if (!res.ok) {
         setSubmitError(res.error ?? 'Erro ao realizar agendamento. Tente novamente.')

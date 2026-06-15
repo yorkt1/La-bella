@@ -42,19 +42,19 @@ export function Footer() {
               href="https://www.instagram.com/labelleinfini/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/50 hover:text-[#D4AF37] transition-colors"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/60 shadow-sm shadow-black/10 transition-all duration-200 hover:bg-[#D4AF37]/15 hover:text-[#D4AF37]"
               aria-label="Instagram"
             >
-              <Instagram size={20} />
+              <Instagram size={18} />
             </a>
             <a
               href="https://facebook.com/labella"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/50 hover:text-[#D4AF37] transition-colors"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-white/10 bg-white/5 text-white/60 shadow-sm shadow-black/10 transition-all duration-200 hover:bg-[#D4AF37]/15 hover:text-[#D4AF37]"
               aria-label="Facebook"
             >
-              <Facebook size={20} />
+              <Facebook size={18} />
             </a>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function Footer() {
           </h4>
           <ul className="space-y-2.5">
             {services.map(({ label, href }) => (
-              <li key={href}>
+              <li key={label}>
                 <Link
                   href={href}
                   className="text-sm hover:text-[#D4AF37] transition-colors"
