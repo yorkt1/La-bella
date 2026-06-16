@@ -45,9 +45,19 @@ export interface SitePromotion {
 }
 
 const WD = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
+const VELTOS_API_ORIGIN = (
+  process.env.NEXT_PUBLIC_VELTOS_API_ORIGIN ?? 'https://www.veltos.com.br'
+).replace(/\/$/, '')
+const SALON_ID = process.env.NEXT_PUBLIC_SALON_ID ?? ''
 const toMin = (hhmm: string) => Number(hhmm.split(':')[0]) * 60 + Number(hhmm.split(':')[1])
 const fmt = (m: number) =>
   `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+
+function veltosUrl(path: string): string {
+  const separator = path.includes('?') ? '&' : '?'
+  const salonQuery = SALON_ID ? `${separator}salonId=${encodeURIComponent(SALON_ID)}` : ''
+  return `${VELTOS_API_ORIGIN}${path}${salonQuery}`
+}
 
 function mapService(s: VeltosService, i: number): Service {
   return {
@@ -66,7 +76,7 @@ function mapService(s: VeltosService, i: number): Service {
 }
 
 async function apiGet<T>(path: string): Promise<T | null> {
-  const res = await fetch(path, { cache: 'no-store' })
+  const res = await fetch(veltosUrl(path), { cache: 'no-store' })
   if (!res.ok) return null
   return (await res.json()) as T
 }
@@ -75,7 +85,7 @@ async function apiPost<T extends { ok?: boolean; error?: string }>(
   path: string,
   body: unknown,
 ): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(veltosUrl(path), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -91,7 +101,13 @@ let salonCache: VeltosSalon | null = null
 
 export async function getVeltosSalon(): Promise<VeltosSalon | null> {
   if (salonCache) return salonCache
-  salonCache = await apiGet<VeltosSalon>('/api/veltos/salon')
+  const data = await apiGet<VeltosSalon | { ok?: boolean; salon?: VeltosSalon }>(
+    '/api/veltos/salon',
+  )
+  salonCache =
+    data && typeof data === 'object' && 'salon' in data
+      ? (data.salon ?? null)
+      : (data as VeltosSalon | null)
   return salonCache
 }
 
@@ -102,9 +118,18 @@ export async function getVeltosServices(): Promise<Service[]> {
 }
 
 export async function getVeltosPromotions(): Promise<SitePromotion[]> {
-  const data = await apiGet<VeltosPromotion[]>('/api/veltos/promotions')
+  const response = await apiGet<
+    VeltosPromotion[] | { ok?: boolean; promotions?: VeltosPromotion[] }
+  >('/api/veltos/promotions')
+  if (!response) return []
+  let data: VeltosPromotion[] | undefined
+  if (Array.isArray(response)) {
+    data = response
+  } else {
+    data = response.promotions
+  }
   if (!data) return []
-  return data.map((p) => ({
+  return data.map((p: VeltosPromotion) => ({
     id: p.id,
     title: p.titulo,
     description: p.descricao,
@@ -148,10 +173,14 @@ export async function getVeltosSlots(serviceId: string, date: string): Promise<S
   if (!day || !day.aberto) return []
 
   const data =
-    (await apiGet<{ hora_inicio: string; duracao: number }[]>(
+    (await apiGet<
+      | { hora_inicio: string; duracao: number }[]
+      | { ok?: boolean; busy?: { hora_inicio: string; duracao: number }[] }
+    >(
       `/api/veltos/busy?prof=${encodeURIComponent(pro.id)}&date=${encodeURIComponent(date)}`,
     )) ?? []
-  const busy = data.map((r) => ({
+  const busyRows = Array.isArray(data) ? data : (data.busy ?? [])
+  const busy = busyRows.map((r) => ({
     start: toMin(r.hora_inicio),
     end: toMin(r.hora_inicio) + r.duracao,
   }))
