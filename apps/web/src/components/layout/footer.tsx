@@ -138,9 +138,20 @@ export function Footer() {
           <p className="text-xs text-white/40">
             © {new Date().getFullYear()} La Belle Infini. Todos os direitos reservados.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center sm:items-end gap-1">
             <p className="text-xs text-white/40">
               labelleinfini@gmail.com · Ingleses, Florianópolis/SC
+            </p>
+            <p className="text-xs text-white/40">
+              Desenvolvido por{' '}
+              <a
+                href="https://www.softvances.com.br/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/55 transition-colors hover:text-[#D4AF37]"
+              >
+                softvances.com.br
+              </a>
             </p>
           </div>
         </div>
