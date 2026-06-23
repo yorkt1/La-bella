@@ -35,12 +35,14 @@ export function AboutSection() {
               src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1780018047/foto_da_fachada_tssmkt.jpg"
               alt="La Belle Infini — Fachada"
               fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
+              priority
             />
           </div>
 
           {/* Experience badge */}
-          <div className="absolute -bottom-5 -right-5 bg-[#1E1E1E] text-white rounded-2xl p-5 shadow-xl">
+          <div className="absolute -bottom-4 right-3 max-w-[calc(100%-1.5rem)] bg-[#1E1E1E] text-white rounded-2xl p-4 shadow-xl sm:-bottom-5 sm:-right-5 sm:p-5">
             <p
               className="text-3xl font-light"
               style={{ fontFamily: 'var(--font-cormorant)' }}

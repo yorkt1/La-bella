@@ -45,9 +45,10 @@ export interface SitePromotion {
 }
 
 const WD = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
-const VELTOS_API_ORIGIN = (
-  process.env.NEXT_PUBLIC_VELTOS_API_ORIGIN ?? 'https://www.veltos.com.br'
-).replace(/\/$/, '')
+const VELTOS_PROXY_ORIGIN = (process.env.NEXT_PUBLIC_VELTOS_PROXY_ORIGIN ?? '').replace(
+  /\/$/,
+  '',
+)
 const SALON_ID = process.env.NEXT_PUBLIC_SALON_ID ?? ''
 const toMin = (hhmm: string) => Number(hhmm.split(':')[0]) * 60 + Number(hhmm.split(':')[1])
 const fmt = (m: number) =>
@@ -56,7 +57,7 @@ const fmt = (m: number) =>
 function veltosUrl(path: string): string {
   const separator = path.includes('?') ? '&' : '?'
   const salonQuery = SALON_ID ? `${separator}salonId=${encodeURIComponent(SALON_ID)}` : ''
-  return `${VELTOS_API_ORIGIN}${path}${salonQuery}`
+  return `${VELTOS_PROXY_ORIGIN}${path}${salonQuery}`
 }
 
 function mapService(s: VeltosService, i: number): Service {
@@ -76,25 +77,33 @@ function mapService(s: VeltosService, i: number): Service {
 }
 
 async function apiGet<T>(path: string): Promise<T | null> {
-  const res = await fetch(veltosUrl(path), { cache: 'no-store' })
-  if (!res.ok) return null
-  return (await res.json()) as T
+  try {
+    const res = await fetch(veltosUrl(path), { cache: 'no-store' })
+    if (!res.ok) return null
+    return (await res.json()) as T
+  } catch {
+    return null
+  }
 }
 
 async function apiPost<T extends { ok?: boolean; error?: string }>(
   path: string,
   body: unknown,
 ): Promise<T> {
-  const res = await fetch(veltosUrl(path), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  })
-  const payload = (await res.json().catch(() => null)) as T | null
-  if (!res.ok) {
-    return { ok: false, error: payload?.error ?? 'Erro de conexão.' } as T
+  try {
+    const res = await fetch(veltosUrl(path), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    const payload = (await res.json().catch(() => null)) as T | null
+    if (!res.ok) {
+      return { ok: false, error: payload?.error ?? 'Erro de conexão.' } as T
+    }
+    return (payload ?? ({ ok: false, error: 'Resposta inválida.' } as T))
+  } catch {
+    return { ok: false, error: 'Erro de conexão.' } as T
   }
-  return (payload ?? ({ ok: false, error: 'Resposta inválida.' } as T))
 }
 
 let salonCache: VeltosSalon | null = null

@@ -14,10 +14,6 @@ const badges = [
 export function HeroSection() {
   return (
     <section className="relative h-screen max-h-screen bg-gradient-to-br from-[#FDFAF8] via-[#F6E6E6] to-[#E8D5A3]/20 flex items-center overflow-hidden">
-      {/* Decorative blobs — ficam dentro do overflow-hidden */}
-      <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-[#C89B7B]/8 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 -left-20 w-64 h-64 rounded-full bg-[#D4AF37]/6 blur-3xl pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-center w-full pt-20">
         {/* Texto */}
         <motion.div
@@ -107,6 +103,7 @@ export function HeroSection() {
               src="https://res.cloudinary.com/dqewxdbfx/image/upload/v1781557800/ChatGPT_Image_11_de_jun._de_2026_15_45_03_rozrwk.png"
               alt="La Belle Infini"
               fill
+              sizes="(min-width: 1024px) 420px, 0px"
               className="object-cover"
               priority
             />
